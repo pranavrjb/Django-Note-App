@@ -34,10 +34,10 @@ pipeline {
                     }
             }
         }
-        stage('Deploy') {
+        stage('Deploy using Ansible') {
             steps {
-                echo 'Deploying the apps'
-                sh 'docker compose down && docker compose up -d'
+                echo 'Deploying the apps using ansible Playbook'
+                sh 'ansible -playbook -i ansible/inventory ansible/deploy_playbook.yaml'
                 echo "App has been deployed!"
             }
         }
