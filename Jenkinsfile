@@ -38,6 +38,7 @@ pipeline {
             steps {
                 echo 'Deploying the apps'
                 sh 'docker compose down && docker compose up -d'
+                echo "App has been deployed!"
             }
         }
       
