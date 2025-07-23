@@ -42,14 +42,15 @@ pipeline {
                     keyFileVariable: 'ANSIBLE_KEY'
                 )]) {
                         sh """
-                        ssh -i "/var/lib/jenkins/keys/id_rsa" -o StrictHostKeyChecking=no vagrant@192.168.56.2'
-                            rm -rf /home/vagrant/project
-                            mkdir -p /home/vagrant/project
-                            git clone https://github.com/pranavrjb/Ansible.git /home/vagrant/project
-                            source /home/vagrant/myenv/bin/activate
-                            cd /home/vagrant/project/ansible &&
-                            ansible-galaxy collection install community.docker
-                            ansible-playbook deploy_playbook.yaml -i inventory -e "build_number=${BUILD_NUMBER}"
+                        ssh -i /var/lib/jenkins/keys/id_rsa -o StrictHostKeyChecking=no vagrant@192.168.56.2 "\
+                        rm -rf /home/vagrant/project && \
+                        mkdir -p /home/vagrant/project && \
+                        git clone https://github.com/pranavrjb/Ansible.git /home/vagrant/project && \
+                        source /home/vagrant/myenv/bin/activate && \
+                        cd /home/vagrant/project/ansible && \
+                        ansible-galaxy collection install community.docker && \
+                        ansible-playbook deploy_playbook.yaml -i inventory -e \"build_number=${BUILD_NUMBER}\""
+
                         '
                         """
                 }
