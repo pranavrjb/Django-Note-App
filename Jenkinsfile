@@ -37,7 +37,22 @@ pipeline {
         stage('Deploy using Ansible') {
             steps {
                 echo 'Deploying the apps using ansible Playbook'
-                sh 'ansible -playbook -i ansible/inventory ansible/deploy_playbook.yaml'
+                 withCredentials([sshUserPrivateKey(
+                    credentialsId: 'ansible',
+                    keyFileVariable: 'ANSIBLE_KEY'
+                )]) {
+                        sh """
+                        ssh -i "/var/lib/jenkins/keys/id_rsa" -o StrictHostKeyChecking=no vagrant@192.168.56.2'
+                            rm -rf /home/vagrant/project
+                            mkdir -p /home/vagrant/project
+                            git clone https://github.com/pranavrjb/Ansible.git /home/vagrant/project
+                            source /home/vagrant/myenv/bin/activate
+                            cd /home/vagrant/project/ansible &&
+                            ansible-galaxy collection install community.docker
+                            ansible-playbook deploy_playbook.yaml -i inventory -e "build_number=${BUILD_NUMBER}"
+                        '
+                        """
+                }
                 echo "App has been deployed!"
             }
         }
